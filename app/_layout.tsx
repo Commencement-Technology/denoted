@@ -23,7 +23,5 @@ export default function Layout() {
     return null;
   }
 
-  console.log("1");
-
   return <RootLayout />;
 }
