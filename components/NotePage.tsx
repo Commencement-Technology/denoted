@@ -19,7 +19,7 @@ export function NotePage() {
       </Main>
     );
 
-  let is_archived = note.path.startsWith("/archived");
+  const is_archived = note.path.startsWith("/archived");
 
   const updateNote = (key, val) => {
     console.log(key, val);
@@ -56,12 +56,12 @@ export function NotePage() {
       <Container>
         {/* <YStack padding="$3" minWidth={300} space="$4"> */}
         <XStack alignItems="center" gap="$4">
-          <Label width={90} color="#0F0" htmlFor={pathname + "title"}>
+          <Label width={90} color="#0F0" htmlFor={pathname + "-title"}>
             Title
           </Label>
           <Input
             flex={1}
-            id={pathname + "title"}
+            id={pathname + "-title"}
             value={note.title || ""}
             onChangeText={(text) => updateNote("title", text)}
           />

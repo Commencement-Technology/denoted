@@ -1,6 +1,5 @@
 import React from "react";
 import { Slot } from "expo-router";
-
 import { storage } from "data";
 import { Note } from "data/Note";
 import { Tag } from "data/Tag";

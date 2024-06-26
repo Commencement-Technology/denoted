@@ -11,6 +11,7 @@ import { ExplorePage } from "components/ExplorePage";
 
 const Page = () => {
   const pathname = usePathname();
+  console.log("REST", pathname);
 
   return pathname.endsWith(".txt") ? <NotePage /> : <ExplorePage />;
 };
