@@ -25,7 +25,9 @@ export function ExploreHeader() {
       modal_state: {
         open: true,
         note: undefined,
-        type: "TAGS",
+        type: "SEARCH",
+        // query: "",
+        // query_tags: [],
       },
     }));
   };

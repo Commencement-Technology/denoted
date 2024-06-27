@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button, Input, ToggleGroup, XStack } from "tamagui";
 import { ButtonText, Title } from "tamagui.config";
 
-export function ModifyTags({ setOpen }: { setOpen: (value: boolean) => void }) {
+export function ModifyTags() {
   const { appState, setAppState } = useAppContext();
   const [name, setName] = useState("");
   const [color, setColor] = useState("");
@@ -98,10 +98,6 @@ export function ModifyTags({ setOpen }: { setOpen: (value: boolean) => void }) {
               onPress={() => toggleNoteTag(name, tag, !isSelected)}
             >
               <XStack>
-                {/* <Section
-                borderRadius="$8"
-                {...(tag.color && { backgroundColor: tag.color })}
-              > */}
                 <ButtonText>{name}</ButtonText>
               </XStack>
             </ToggleGroup.Item>

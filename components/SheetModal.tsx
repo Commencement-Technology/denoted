@@ -2,8 +2,8 @@ import { Sheet } from "@tamagui/sheet";
 import { useState } from "react";
 import { EditFile } from "./EditFile";
 import { ModifyTags } from "./ModifyTags";
-import { Note } from "data/Note";
 import { useAppContext } from "app/AppContext";
+import { SearchModal } from "./SearchModal";
 
 export const SheetModal = () => {
   const { appState, setAppState } = useAppContext();
@@ -48,7 +48,8 @@ export const SheetModal = () => {
         {
           {
             EDIT: <EditFile setOpen={setOpen} />,
-            TAGS: <ModifyTags setOpen={setOpen} />,
+            TAGS: <ModifyTags />,
+            SEARCH: <SearchModal />,
           }[appState.modal_state.type || "EDIT"]
         }
       </Sheet.Frame>

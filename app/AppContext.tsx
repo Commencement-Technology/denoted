@@ -12,6 +12,8 @@ export type stateType = {
     open: boolean;
     note?: Note;
     type?: string;
+    query?: string;
+    query_tags?: string[];
   };
 };
 
