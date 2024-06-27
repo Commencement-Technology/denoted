@@ -4,30 +4,28 @@ import { XStack } from "tamagui";
 import { Button } from "tamagui.config";
 
 export function ExploreHeader() {
-  const { appState, setAppState } = useAppContext();
+  const { setAppState } = useAppContext();
 
   const openFolderModal = () => {
-    setAppState((prev) => ({
-      ...prev,
-      modal_state: {
-        open: true,
-        note: undefined,
-        type: "EDIT",
-      },
-    }));
+    setAppState((prev) => {
+      const state = prev;
+      state.modal_state.open = true;
+      state.modal_state.note = undefined;
+      state.modal_state.type = "EDIT";
+      return state;
+    });
   };
 
   const openSearchModal = () => {
-    setAppState((prev) => ({
-      ...prev,
-      modal_state: {
-        open: true,
-        note: undefined,
-        type: "SEARCH",
-        query: "",
-        query_tags: [],
-      },
-    }));
+    setAppState((prev) => {
+      const state = prev;
+      state.modal_state.open = true;
+      state.modal_state.note = undefined;
+      state.modal_state.type = "SEARCH";
+      state.modal_state.query = "";
+      state.modal_state.query_tags = [];
+      return state;
+    });
   };
 
   return (

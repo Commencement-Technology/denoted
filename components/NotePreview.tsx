@@ -1,6 +1,6 @@
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
-import { Card, H4, H6, Paragraph, XStack, YStack } from "tamagui";
+import { Card, H4, Paragraph, XStack } from "tamagui";
 
 export function NotePreview({
   path,
@@ -11,7 +11,7 @@ export function NotePreview({
   note: Note;
   deadline: string;
 }) {
-  const { appState, setAppState } = useAppContext();
+  const { appState } = useAppContext();
 
   let cardColor = "#eee";
   for (let tag of note.tag_ids || []) {

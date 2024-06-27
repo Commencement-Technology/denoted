@@ -85,9 +85,6 @@ export function ExplorePage() {
     "deadline"
   );
 
-  console.log(groupedMap);
-  console.log(groupedByDeadline);
-
   const createNote = () => {
     const newPath = `${pathname}/${appState.notes_count}.txt`;
     const newNote: Note = {
@@ -96,11 +93,12 @@ export function ExplorePage() {
       tag_ids: [],
     };
 
-    setAppState((prev) => ({
-      ...prev,
-      notes_count: prev.notes_count + 1,
-      notes: [...prev.notes, newNote],
-    }));
+    setAppState((prev) => {
+      const state = prev;
+      state.notes_count = state.notes_count + 1;
+      state.notes = [...state.notes, newNote];
+      return state;
+    });
 
     router.push(newPath);
   };

@@ -13,14 +13,23 @@ import { Section, XStack } from "tamagui";
 import { Button } from "tamagui.config";
 import DateTimePicker from "./DateTimePicker";
 
-export function NoteHeader({ note }: { note: Note | undefined }) {
+export function NoteHeader() {
   const pathname = usePathname();
   const { appState, setAppState } = useAppContext();
   const [isOpenDateModal, setIsOpenDateModal] = useState(false);
+  const note = appState.notes?.find((note) => note.path.startsWith(pathname));
 
   if (!note) return <Section></Section>;
 
   const is_archived = note && note.path.startsWith("/archived");
+
+  const updateNote = (newNote) => {
+    setAppState((prev) => {
+      const state = prev;
+      state.notes = state.notes.map((n) => (n.path == pathname ? newNote : n));
+      return state;
+    });
+  };
 
   const toggleArchive = () => {
     const newPath =
@@ -31,11 +40,7 @@ export function NoteHeader({ note }: { note: Note | undefined }) {
       path: newPath,
     };
 
-    setAppState((prev) => ({
-      ...prev,
-      notes: prev.notes.map((n) => (n.path == pathname ? newNote : n)),
-    }));
-
+    updateNote(newNote);
     router.replace(newPath);
   };
 
@@ -45,22 +50,18 @@ export function NoteHeader({ note }: { note: Note | undefined }) {
       deadline_at: date.getTime(),
     };
 
-    setAppState((prev) => ({
-      ...prev,
-      notes: prev.notes.map((n) => (n.path == pathname ? newNote : n)),
-    }));
+    updateNote(newNote);
     setIsOpenDateModal(false);
   };
 
   const openTagsModal = () => {
-    setAppState((prev) => ({
-      ...prev,
-      modal_state: {
-        open: true,
-        note: note,
-        type: "TAGS",
-      },
-    }));
+    setAppState((prev) => {
+      const state = prev;
+      state.modal_state.open = true;
+      state.modal_state.note = note;
+      state.modal_state.type = "TAGS";
+      return state;
+    });
   };
 
   return (

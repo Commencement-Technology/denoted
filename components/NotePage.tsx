@@ -1,6 +1,6 @@
-import { usePathname, router } from "expo-router";
-import { Button, ButtonText, Container, Main } from "tamagui.config";
-import { H4, Input, Label, Separator, TextArea, XStack, YStack } from "tamagui";
+import { usePathname } from "expo-router";
+import { Container, Main } from "tamagui.config";
+import { H4, Input, Separator, TextArea, XStack } from "tamagui";
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 
@@ -12,12 +12,7 @@ export function NotePage() {
     note.path.startsWith(pathname)
   );
 
-  if (!note)
-    return (
-      <Main>
-        <H4 color="#00F">Note not found at {pathname}</H4>
-      </Main>
-    );
+  if (!note) return <></>;
 
   const updateNote = (key, val) => {
     const newNote = {
@@ -25,10 +20,11 @@ export function NotePage() {
       [key]: val,
     };
 
-    setAppState((prev) => ({
-      ...prev,
-      notes: prev.notes.map((n) => (n.path == pathname ? newNote : n)),
-    }));
+    setAppState((prev) => {
+      const state = prev;
+      state.notes = state.notes.map((n) => (n.path == pathname ? newNote : n));
+      return state;
+    });
   };
 
   return (

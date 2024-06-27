@@ -1,7 +1,11 @@
 import { useFonts } from "expo-font";
 import { SplashScreen } from "expo-router";
 import { useEffect } from "react";
-import { RootLayout } from "components/RootLayout";
+import { TamaguiProvider, Theme } from "tamagui";
+
+import config from "../tamagui.config";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AppContextProvider } from "./AppContext";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -23,5 +27,13 @@ export default function Layout() {
     return null;
   }
 
-  return <RootLayout />;
+  return (
+    <TamaguiProvider config={config}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Theme name={"blue"}>
+          <AppContextProvider />
+        </Theme>
+      </GestureHandlerRootView>
+    </TamaguiProvider>
+  );
 }
