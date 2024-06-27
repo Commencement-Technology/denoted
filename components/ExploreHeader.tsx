@@ -1,9 +1,7 @@
 import { FolderPlus, Search } from "@tamagui/lucide-icons";
 import { useAppContext } from "app/AppContext";
-import { useState } from "react";
 import { XStack } from "tamagui";
 import { Button } from "tamagui.config";
-// import { SheetModal } from "./SheetModal";
 
 export function ExploreHeader() {
   const { appState, setAppState } = useAppContext();
@@ -26,8 +24,8 @@ export function ExploreHeader() {
         open: true,
         note: undefined,
         type: "SEARCH",
-        // query: "",
-        // query_tags: [],
+        query: "",
+        query_tags: [],
       },
     }));
   };

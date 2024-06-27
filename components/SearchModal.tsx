@@ -5,17 +5,16 @@ import { ButtonText } from "tamagui.config";
 
 export function SearchModal() {
   const { appState, setAppState } = useAppContext();
-  const [query, setQuery] = useState(appState.modal_state.query);
 
-  useEffect(() => {
+  const searchQuery = (text) => {
     setAppState((prev) => ({
       ...prev,
       modal_state: {
         ...prev.modal_state,
-        query,
+        query: text,
       },
     }));
-  }, [query]);
+  };
 
   const toggleQueryTag = (name, tag, toSelect) => {
     setAppState((prev) => ({
@@ -34,8 +33,8 @@ export function SearchModal() {
       <XStack gap="$4" alignItems="center">
         <Input
           flex={1}
-          value={query}
-          onChangeText={setQuery}
+          value={appState.modal_state.query}
+          onChangeText={(text) => searchQuery(text)}
           placeholder="Search in notes"
         />
       </XStack>

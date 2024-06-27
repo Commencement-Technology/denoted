@@ -1,8 +1,16 @@
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
-import { Card, H4, Paragraph } from "tamagui";
+import { Card, H4, H6, Paragraph, XStack, YStack } from "tamagui";
 
-export function NotePreview({ path, note }: { path: string; note: Note }) {
+export function NotePreview({
+  path,
+  note,
+  deadline,
+}: {
+  path: string;
+  note: Note;
+  deadline: string;
+}) {
   const { appState, setAppState } = useAppContext();
 
   let cardColor = "#eee";
@@ -22,9 +30,25 @@ export function NotePreview({ path, note }: { path: string; note: Note }) {
       borderWidth={1}
     >
       <Card.Header padded>
-        {note.title && <H4 color="#6366F1">{note.title}</H4>}
+        {deadline !== "None" && (
+          <XStack alignSelf="flex-end" x="$-2.5" y="$2" position="absolute">
+            <Paragraph
+              size="$2"
+              borderWidth={1}
+              borderRadius="$8"
+              paddingHorizontal="$1.5"
+              color="#333"
+            >
+              Due {deadline}
+            </Paragraph>
+          </XStack>
+        )}
+        {!note.title && !note.body && (
+          <H4 color="#444">Untitled #{path.substring(1, path.indexOf("."))}</H4>
+        )}
+        {note.title && <H4 color="#333">{note.title}</H4>}
         {note.body && (
-          <Paragraph color="#111" theme="alt2">
+          <Paragraph color="#444" theme="alt2">
             {note.body?.slice(0, 256)}
           </Paragraph>
         )}

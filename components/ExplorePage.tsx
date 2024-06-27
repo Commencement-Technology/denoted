@@ -8,8 +8,19 @@ import { NotePreview } from "./NotePreview";
 import { FolderPreview } from "./FolderPreview";
 import { Plus } from "@tamagui/lucide-icons";
 import groupBy from "utils/groupBy";
+import Deadlines from "constants/Deadlines";
+import React from "react";
 
-type File = Note & { key: string; type: string };
+type Deadline =
+  | "Today"
+  | "Tomorrow"
+  | "This Week"
+  | "Next Week"
+  | "This Month"
+  | "Next Month"
+  | "None";
+
+type File = Note & { key: string; type: string; deadline: Deadline };
 
 export function ExplorePage() {
   const pathname = usePathname();
@@ -43,10 +54,24 @@ export function ExplorePage() {
       if (flag) return map;
     }
 
+    const completionWindow = (note.deadline_at || 0) - Date.now();
+    let deadline: Deadline;
+    if (completionWindow < -Deadlines.Today) deadline = "None";
+    else if (completionWindow < Deadlines.Today) deadline = "Today";
+    else if (completionWindow < Deadlines.Tomorrow) deadline = "Tomorrow";
+    else if (completionWindow < Deadlines["This Week"]) deadline = "This Week";
+    else if (completionWindow < Deadlines["Next Week"]) deadline = "Next Week";
+    else if (completionWindow < Deadlines["This Month"])
+      deadline = "This Month";
+    else if (completionWindow < Deadlines["Next Month"])
+      deadline = "Next Month";
+    else deadline = "None";
+
     return map.set(key, {
       ...note,
       key,
       type: key.endsWith(".txt") ? "NOTE" : "FOLDER",
+      deadline,
     });
   }, new Map<string, File>());
 
@@ -54,6 +79,14 @@ export function ExplorePage() {
     Array.from(filterPopulate.values()),
     "type"
   );
+
+  const groupedByDeadline: Map<string, File[]> = groupBy(
+    groupedMap["NOTE"] || [],
+    "deadline"
+  );
+
+  console.log(groupedMap);
+  console.log(groupedByDeadline);
 
   const createNote = () => {
     const newPath = `${pathname}/${appState.notes_count}.txt`;
@@ -91,14 +124,32 @@ export function ExplorePage() {
                 </Section>
               ))}
             {groupedMap["NOTE"] &&
-              groupedMap["NOTE"].map((file) => (
-                <Section
-                  onPress={() => router.push(pathname + file.key)}
-                  key={file.key}
-                >
-                  <NotePreview path={file.key} note={file} />
-                </Section>
-              ))}
+              [
+                "Today",
+                "Tomorrow",
+                "This Week",
+                "Next Week",
+                "This Month",
+                "Next Month",
+                "None",
+              ].map((value) =>
+                groupedByDeadline[value] ? (
+                  groupedByDeadline[value].map((file) => (
+                    <Section
+                      onPress={() => router.push(pathname + file.key)}
+                      key={file.key}
+                    >
+                      <NotePreview
+                        path={file.key}
+                        note={file}
+                        deadline={file.deadline}
+                      />
+                    </Section>
+                  ))
+                ) : (
+                  <React.Fragment key={value}></React.Fragment>
+                )
+              )}
           </ScrollView>
         </YStack>
         <YStack fullscreen justifyContent="flex-end" alignItems="flex-end">
