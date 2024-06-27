@@ -9,13 +9,13 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "npx expo start --web",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "postinstall": "patch-package"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@expo/vector-icons": "^14.0.0",
     "@react-navigation/drawer": "^6.6.15",
     "@react-navigation/native": "^6.1.17",
     "@tamagui/config": "^1.101.3",
@@ -36,6 +36,8 @@
     "expo-status-bar": "^1.12.1",
     "expo-system-ui": "~3.0.4",
     "expo-web-browser": "~13.0.3",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.1",
