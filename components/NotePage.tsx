@@ -20,7 +20,6 @@ export function NotePage() {
     );
 
   const updateNote = (key, val) => {
-    console.log(key, val);
     const newNote = {
       ...note,
       [key]: val,
@@ -34,22 +33,31 @@ export function NotePage() {
 
   return (
     <Main>
-      <Container>
-        {/* <YStack padding="$3" minWidth={300} space="$4"> */}
+      <Container flex={1} paddingBottom="$10">
         <XStack>
           <Input
+            backgroundColor="transparent"
+            borderWidth={0}
             flex={1}
+            fontSize="$8"
             value={note.title || ""}
             onChangeText={(text) => updateNote("title", text)}
             placeholder="Title"
+            color="#6366F1"
+            placeholderTextColor="#aaa"
           />
         </XStack>
-        <Separator marginVertical={15} />
+        <Separator borderColor="#ccc" marginVertical={15} />
         <TextArea
+          backgroundColor="transparent"
+          borderWidth={0}
+          color="#111"
           value={note.body || ""}
           onChangeText={(text) => updateNote("body", text)}
+          padding={0}
+          numberOfLines={9007199254740991}
+          rows={9007199254740991}
         />
-        {/* </YStack> */}
       </Container>
     </Main>
   );

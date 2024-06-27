@@ -1,20 +1,21 @@
 import { usePathname, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ButtonText, Main } from "tamagui.config";
+import { Main } from "tamagui.config";
 import { Button, ScrollView, Section, YStack, ZStack } from "tamagui";
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 import { NotePreview } from "./NotePreview";
 import { FolderPreview } from "./FolderPreview";
 import { Plus } from "@tamagui/lucide-icons";
+import groupBy from "utils/groupBy";
 
-// PIN RESET DELETE
+type File = Note & { key: string; type: string };
 
 export function ExplorePage() {
   const pathname = usePathname();
   const { appState, setAppState } = useAppContext();
 
-  const filtered: Map<string, Note> = appState.notes?.reduce((map, note) => {
+  const filterPopulate = appState.notes?.reduce((map, note) => {
     if (
       appState.modal_state.query &&
       !note.title?.includes(appState.modal_state.query) &&
@@ -22,7 +23,7 @@ export function ExplorePage() {
     )
       return map;
 
-    if (!note.path.startsWith(pathname)) return map;
+    if (!note.path.startsWith(pathname + "/")) return map;
     const nextSlash = note.path.indexOf("/", pathname.length + 1);
     const key = note.path.slice(
       pathname.length,
@@ -42,12 +43,17 @@ export function ExplorePage() {
       if (flag) return map;
     }
 
-    return map.set(key, note);
-  }, new Map<string, Note>());
+    return map.set(key, {
+      ...note,
+      key,
+      type: key.endsWith(".txt") ? "NOTE" : "FOLDER",
+    });
+  }, new Map<string, File>());
 
-  console.log(pathname);
-  console.log(appState);
-  console.log(filtered);
+  const groupedMap: Map<string, File[]> = groupBy(
+    Array.from(filterPopulate.values()),
+    "type"
+  );
 
   const createNote = () => {
     const newPath = `${pathname}/${appState.notes_count}.txt`;
@@ -69,23 +75,30 @@ export function ExplorePage() {
   return (
     <Main>
       <ZStack flex={1}>
-        <YStack fullscreen>
+        <YStack fullscreen paddingBottom="$10">
           <StatusBar />
           <ScrollView
-            // horizontal
-            // showsHorizontalScrollIndicator={false}
             px={40}
             contentContainerStyle={{ gap: 14, paddingTop: 14 }}
           >
-            {[...filtered].map(([path, note]) => (
-              <Section onPress={() => router.push(pathname + path)} key={path}>
-                {path.endsWith(".txt") ? (
-                  <NotePreview note={note} />
-                ) : (
-                  <FolderPreview note={note} />
-                )}
-              </Section>
-            ))}
+            {groupedMap["FOLDER"] &&
+              groupedMap["FOLDER"].map((file) => (
+                <Section
+                  onPress={() => router.push(pathname + file.key)}
+                  key={file.key}
+                >
+                  <FolderPreview path={file.key} note={file} />
+                </Section>
+              ))}
+            {groupedMap["NOTE"] &&
+              groupedMap["NOTE"].map((file) => (
+                <Section
+                  onPress={() => router.push(pathname + file.key)}
+                  key={file.key}
+                >
+                  <NotePreview path={file.key} note={file} />
+                </Section>
+              ))}
           </ScrollView>
         </YStack>
         <YStack fullscreen justifyContent="flex-end" alignItems="flex-end">

@@ -1,7 +1,7 @@
 import { useAppContext } from "app/AppContext";
 import { useEffect, useState } from "react";
-import { Button, Input, ToggleGroup, XStack } from "tamagui";
-import { ButtonText, Title } from "tamagui.config";
+import { Button, H2, Input, ToggleGroup, XStack } from "tamagui";
+import { ButtonText } from "tamagui.config";
 
 export function SearchModal() {
   const { appState, setAppState } = useAppContext();
@@ -39,7 +39,7 @@ export function SearchModal() {
           placeholder="Search in notes"
         />
       </XStack>
-      <Title>Tags</Title>
+      <H2>Tags</H2>
       <ToggleGroup type="multiple" size="$0.5" gap="$2" flexWrap="wrap">
         {Object.entries(appState.tags).map(([name, tag]) => {
           const isSelected = appState.modal_state.query_tags?.includes(name);

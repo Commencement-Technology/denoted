@@ -1,10 +1,10 @@
-import { ListPlus } from "@tamagui/lucide-icons";
+import { BookmarkPlus } from "@tamagui/lucide-icons";
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 import { Tag } from "data/Tag";
 import { useState } from "react";
-import { Button, Input, ToggleGroup, XStack } from "tamagui";
-import { ButtonText, Title } from "tamagui.config";
+import { Button, H2, Input, ToggleGroup, XStack } from "tamagui";
+import { ButtonText } from "tamagui.config";
 
 export function ModifyTags() {
   const { appState, setAppState } = useAppContext();
@@ -61,7 +61,7 @@ export function ModifyTags() {
           placeholder="Tag Name"
         />
         <Button onPress={createTag}>
-          <ListPlus />
+          <BookmarkPlus />
         </Button>
       </XStack>
       <XStack>
@@ -72,7 +72,7 @@ export function ModifyTags() {
           placeholder="Tag Color"
         />
       </XStack>
-      <Title>Tags</Title>
+      <H2>Tags</H2>
       <ToggleGroup
         type="multiple"
         size="$0.5"
