@@ -20,19 +20,16 @@ export function ExplorePage() {
   const pathname = usePathname();
   const { appState, setAppState } = useAppContext();
 
-  const filtered: Map<string, Note> = appState.notes?.reduce(
-    (map, note) =>
-      note.path.startsWith(pathname)
-        ? map.set(
-            note.path.slice(
-              pathname.length,
-              note.path.indexOf("/", pathname.length + 1) + 1 || undefined
-            ),
-            note
-          )
-        : map,
-    new Map<string, Note>()
-  );
+  const filtered: Map<string, Note> = appState.notes?.reduce((map, note) => {
+    if (!note.path.startsWith(pathname)) return map;
+    const nextSlash = note.path.indexOf("/", pathname.length + 1);
+    const key = note.path.slice(
+      pathname.length,
+      nextSlash < 0 ? undefined : nextSlash
+    );
+    if (key.length < 1) return map;
+    return map.set(key, note);
+  }, new Map<string, Note>());
 
   console.log(pathname);
   console.log(appState);

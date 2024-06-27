@@ -7,12 +7,14 @@ import {
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 import { router, usePathname } from "expo-router";
+import { useState } from "react";
 import { Section, XStack } from "tamagui";
 import { Button } from "tamagui.config";
 
 export function NoteHeader({ note }: { note: Note | undefined }) {
   const pathname = usePathname();
   const { appState, setAppState } = useAppContext();
+  // const [tagOpen, setTagOpen] = useState(false);
 
   if (!note) return <Section></Section>;
 
