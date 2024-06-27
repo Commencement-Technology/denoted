@@ -1,15 +1,7 @@
 import { usePathname, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ButtonText, Main } from "tamagui.config";
-import {
-  Button,
-  H2,
-  ScrollView,
-  Section,
-  XStack,
-  YStack,
-  ZStack,
-} from "tamagui";
+import { Button, ScrollView, Section, YStack, ZStack } from "tamagui";
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 import { NotePreview } from "./NotePreview";
