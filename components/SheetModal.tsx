@@ -1,40 +1,27 @@
-import { FolderPlus } from "@tamagui/lucide-icons";
 import { Sheet } from "@tamagui/sheet";
-import { useAppContext } from "app/AppContext";
-import { Note } from "data/Note";
-import { router, usePathname } from "expo-router";
 import { useState } from "react";
+import { EditFile } from "./EditFile";
+import { ModifyTags } from "./ModifyTags";
+import { Note } from "data/Note";
+import { useAppContext } from "app/AppContext";
 
-import { H1, H2, Input, Paragraph, XStack, YStack } from "tamagui";
-import { Button } from "tamagui.config";
-
-export const SheetModal = ({ open, setOpen }) => {
-  const pathname = usePathname();
+export const SheetModal = () => {
   const { appState, setAppState } = useAppContext();
   const [position, setPosition] = useState(0);
-  const [value, setValue] = useState("");
   const snapPoints = [85, 50, 25];
 
-  const createFolder = () => {
-    const newPath = `${pathname}/${value}`;
-    const newNote: Note = {
-      path: newPath,
-    };
-
+  const setOpen = (value: boolean) => {
     setAppState((prev) => ({
       ...prev,
-      notes: [...prev.notes, newNote],
+      modal_state: { ...prev.modal_state, open: value },
     }));
-
-    setOpen(false);
-    router.push(newPath);
   };
 
   return (
     <Sheet
-      forceRemoveScrollEnabled={open}
-      modal={true}
-      open={open}
+      forceRemoveScrollEnabled={appState.modal_state.open}
+      modal={false}
+      open={appState.modal_state.open}
       onOpenChange={setOpen}
       snapPoints={snapPoints}
       snapPointsMode="percent"
@@ -58,17 +45,16 @@ export const SheetModal = ({ open, setOpen }) => {
         alignItems="center"
         gap="$5"
       >
-        <XStack gap="$4" alignItems="center">
-          <Input
-            flex={1}
-            value={value}
-            onChangeText={setValue}
-            placeholder="Folder Name"
-          />
-          <Button onPress={createFolder}>
-            <FolderPlus />
-          </Button>
-        </XStack>
+        {
+          {
+            EDIT: (
+              <EditFile setOpen={setOpen} note={appState.modal_state.note} />
+            ),
+            TAGS: (
+              <ModifyTags setOpen={setOpen} note={appState.modal_state.note} />
+            ),
+          }[appState.modal_state.type || "EDIT"]
+        }
       </Sheet.Frame>
     </Sheet>
   );
