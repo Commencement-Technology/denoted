@@ -6,14 +6,24 @@ import { Tag } from "data/Tag";
 
 export type stateType = {
   notes: Note[];
-  tags: Tag[];
   notes_count: number;
+  tags: Record<string, Tag>;
+  modal_state: {
+    open: boolean;
+    note?: Note;
+    type?: string;
+    query?: string;
+    query_tags?: string[];
+  };
 };
 
 const defaultState: stateType = {
   notes: [],
-  tags: [],
   notes_count: 0,
+  tags: {},
+  modal_state: {
+    open: false,
+  },
 };
 
 export const AppContext = React.createContext<{
@@ -28,7 +38,9 @@ export const useAppContext = () => React.useContext(AppContext);
 
 export const AppContextProvider = () => {
   const localState = storage.getString("app_state");
-  const [appState, setAppState] = React.useState(localState || defaultState);
+  const [appState, setAppState] = React.useState(
+    localState ? { ...defaultState, ...JSON.parse(localState) } : defaultState
+  );
 
   React.useEffect(() => {
     storage.set("app_state", JSON.stringify(appState));

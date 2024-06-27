@@ -1,38 +1,49 @@
 import { usePathname, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ButtonText, Main } from "tamagui.config";
-import {
-  Button,
-  H2,
-  ScrollView,
-  Section,
-  XStack,
-  YStack,
-  ZStack,
-} from "tamagui";
+import { Button, ScrollView, Section, YStack, ZStack } from "tamagui";
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 import { NotePreview } from "./NotePreview";
 import { FolderPreview } from "./FolderPreview";
 import { Plus } from "@tamagui/lucide-icons";
 
+// PIN RESET DELETE
+
 export function ExplorePage() {
   const pathname = usePathname();
   const { appState, setAppState } = useAppContext();
 
-  const filtered: Map<string, Note> = appState.notes?.reduce(
-    (map, note) =>
-      note.path.startsWith(pathname)
-        ? map.set(
-            note.path.slice(
-              pathname.length,
-              note.path.indexOf("/", pathname.length + 1) + 1 || undefined
-            ),
-            note
-          )
-        : map,
-    new Map<string, Note>()
-  );
+  const filtered: Map<string, Note> = appState.notes?.reduce((map, note) => {
+    if (
+      appState.modal_state.query &&
+      !note.title?.includes(appState.modal_state.query) &&
+      !note.body?.includes(appState.modal_state.query)
+    )
+      return map;
+
+    if (!note.path.startsWith(pathname)) return map;
+    const nextSlash = note.path.indexOf("/", pathname.length + 1);
+    const key = note.path.slice(
+      pathname.length,
+      nextSlash < 0 ? undefined : nextSlash
+    );
+    if (key.length < 1) return map;
+
+    if (
+      appState.modal_state.query_tags &&
+      appState.modal_state.query_tags.length > 0
+    ) {
+      const tags = appState.modal_state.query_tags.toString();
+      let flag = true;
+      note.tag_ids?.forEach((tag) => {
+        if (tags.includes(tag)) flag = false;
+      });
+      if (flag) return map;
+    }
+
+    return map.set(key, note);
+  }, new Map<string, Note>());
 
   console.log(pathname);
   console.log(appState);
