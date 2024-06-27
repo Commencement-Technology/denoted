@@ -6,15 +6,9 @@ import { useState } from "react";
 import { Input, XStack } from "tamagui";
 import { Button } from "tamagui.config";
 
-export function EditFile({
-  setOpen,
-  note,
-}: {
-  setOpen: (value: boolean) => void;
-  note?: Note;
-}) {
+export function SheetCreateFolder() {
   const pathname = usePathname();
-  const { appState, setAppState } = useAppContext();
+  const { setAppState } = useAppContext();
   const [value, setValue] = useState("");
 
   const createFolder = () => {
@@ -23,12 +17,12 @@ export function EditFile({
       path: newPath,
     };
 
-    setAppState((prev) => ({
-      ...prev,
-      notes: [...prev.notes, newNote],
-    }));
-
-    setOpen(false);
+    setAppState((prev) => {
+      const state = prev;
+      state.notes = [...state.notes, newNote];
+      state.modal_state.open = false;
+      return state;
+    });
     router.push(newPath);
   };
 
@@ -39,7 +33,7 @@ export function EditFile({
           flex={1}
           value={value}
           onChangeText={setValue}
-          placeholder="Folder Name"
+          placeholder="Folder name"
         />
         <Button onPress={createFolder}>
           <FolderPlus />

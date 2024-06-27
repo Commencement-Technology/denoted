@@ -1,6 +1,6 @@
-import { usePathname, router } from "expo-router";
-import { Button, ButtonText, Container, Main } from "tamagui.config";
-import { H4, Input, Label, Separator, TextArea, XStack, YStack } from "tamagui";
+import { usePathname } from "expo-router";
+import { Container, Main } from "tamagui.config";
+import { H4, Input, Separator, TextArea, XStack } from "tamagui";
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 
@@ -12,44 +12,48 @@ export function NotePage() {
     note.path.startsWith(pathname)
   );
 
-  if (!note)
-    return (
-      <Main>
-        <H4 color="#00F">Note not found at {pathname}</H4>
-      </Main>
-    );
+  if (!note) return <></>;
 
   const updateNote = (key, val) => {
-    console.log(key, val);
     const newNote = {
       ...note,
       [key]: val,
     };
 
-    setAppState((prev) => ({
-      ...prev,
-      notes: prev.notes.map((n) => (n.path == pathname ? newNote : n)),
-    }));
+    setAppState((prev) => {
+      const state = prev;
+      state.notes = state.notes.map((n) => (n.path == pathname ? newNote : n));
+      return state;
+    });
   };
 
   return (
     <Main>
-      <Container>
-        {/* <YStack padding="$3" minWidth={300} space="$4"> */}
+      <Container flex={1} paddingBottom="$10">
         <XStack>
           <Input
+            backgroundColor="transparent"
+            borderWidth={0}
             flex={1}
+            fontSize="$8"
             value={note.title || ""}
             onChangeText={(text) => updateNote("title", text)}
             placeholder="Title"
+            color="#6366F1"
+            placeholderTextColor="#aaa"
           />
         </XStack>
-        <Separator marginVertical={15} />
+        <Separator borderColor="#ccc" marginVertical={15} />
         <TextArea
+          backgroundColor="transparent"
+          borderWidth={0}
+          color="#111"
           value={note.body || ""}
           onChangeText={(text) => updateNote("body", text)}
+          padding={0}
+          numberOfLines={9007199254740991}
+          rows={9007199254740991}
         />
-        {/* </YStack> */}
       </Container>
     </Main>
   );

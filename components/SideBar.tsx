@@ -5,6 +5,7 @@ import { Button, ButtonText, Container } from "tamagui.config";
 
 export function SideBar() {
   const pathname = usePathname();
+  const isNotes = pathname.startsWith("/notes");
 
   return (
     <Container marginTop="$4">
@@ -13,20 +14,26 @@ export function SideBar() {
           onPress={() => router.navigate("/notes")}
           alignItems="flex-start"
           borderRadius="$4"
+          {...(isNotes && { backgroundColor: "#6366F1" })}
         >
           <XStack gap="$2">
-            <StickyNote />
-            <ButtonText>Notes</ButtonText>
+            <StickyNote {...(!isNotes && { color: "#6366F1" })} />
+            <ButtonText {...(!isNotes && { color: "#6366F1" })}>
+              Notes
+            </ButtonText>
           </XStack>
         </Button>
         <Button
           onPress={() => router.navigate("/archived")}
           alignItems="flex-start"
           borderRadius="$4"
+          {...(!isNotes && { backgroundColor: "#6366F1" })}
         >
           <XStack gap="$2">
-            <Archive />
-            <ButtonText>Archived</ButtonText>
+            <Archive {...(isNotes && { color: "#6366F1" })} />
+            <ButtonText {...(isNotes && { color: "#6366F1" })}>
+              Archived
+            </ButtonText>
           </XStack>
         </Button>
       </YStack>

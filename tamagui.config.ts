@@ -52,7 +52,6 @@ export const Subtitle = styled(Text, {
 
 export const Button = styled(YStack, {
   alignItems: "center",
-  backgroundColor: "#6366F1",
   borderRadius: 24,
   justifyContent: "center",
   padding: 16,

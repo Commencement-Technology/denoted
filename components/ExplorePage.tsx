@@ -1,20 +1,32 @@
 import { usePathname, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ButtonText, Main } from "tamagui.config";
+import { Main } from "tamagui.config";
 import { Button, ScrollView, Section, YStack, ZStack } from "tamagui";
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 import { NotePreview } from "./NotePreview";
 import { FolderPreview } from "./FolderPreview";
 import { Plus } from "@tamagui/lucide-icons";
+import groupBy from "utils/groupBy";
+import Deadlines from "constants/Deadlines";
+import React from "react";
 
-// PIN RESET DELETE
+type Deadline =
+  | "Today"
+  | "Tomorrow"
+  | "This Week"
+  | "Next Week"
+  | "This Month"
+  | "Next Month"
+  | "None";
+
+type File = Note & { key: string; type: string; deadline: Deadline };
 
 export function ExplorePage() {
   const pathname = usePathname();
   const { appState, setAppState } = useAppContext();
 
-  const filtered: Map<string, Note> = appState.notes?.reduce((map, note) => {
+  const filterPopulate = appState.notes?.reduce((map, note) => {
     if (
       appState.modal_state.query &&
       !note.title?.includes(appState.modal_state.query) &&
@@ -22,7 +34,7 @@ export function ExplorePage() {
     )
       return map;
 
-    if (!note.path.startsWith(pathname)) return map;
+    if (!note.path.startsWith(pathname + "/")) return map;
     const nextSlash = note.path.indexOf("/", pathname.length + 1);
     const key = note.path.slice(
       pathname.length,
@@ -42,12 +54,36 @@ export function ExplorePage() {
       if (flag) return map;
     }
 
-    return map.set(key, note);
-  }, new Map<string, Note>());
+    const completionWindow = (note.deadline_at || 0) - Date.now();
+    let deadline: Deadline;
+    if (completionWindow < -Deadlines.Today) deadline = "None";
+    else if (completionWindow < Deadlines.Today) deadline = "Today";
+    else if (completionWindow < Deadlines.Tomorrow) deadline = "Tomorrow";
+    else if (completionWindow < Deadlines["This Week"]) deadline = "This Week";
+    else if (completionWindow < Deadlines["Next Week"]) deadline = "Next Week";
+    else if (completionWindow < Deadlines["This Month"])
+      deadline = "This Month";
+    else if (completionWindow < Deadlines["Next Month"])
+      deadline = "Next Month";
+    else deadline = "None";
 
-  console.log(pathname);
-  console.log(appState);
-  console.log(filtered);
+    return map.set(key, {
+      ...note,
+      key,
+      type: key.endsWith(".txt") ? "NOTE" : "FOLDER",
+      deadline,
+    });
+  }, new Map<string, File>());
+
+  const groupedMap: Map<string, File[]> = groupBy(
+    Array.from(filterPopulate.values()),
+    "type"
+  );
+
+  const groupedByDeadline: Map<string, File[]> = groupBy(
+    groupedMap["NOTE"] || [],
+    "deadline"
+  );
 
   const createNote = () => {
     const newPath = `${pathname}/${appState.notes_count}.txt`;
@@ -57,11 +93,12 @@ export function ExplorePage() {
       tag_ids: [],
     };
 
-    setAppState((prev) => ({
-      ...prev,
-      notes_count: prev.notes_count + 1,
-      notes: [...prev.notes, newNote],
-    }));
+    setAppState((prev) => {
+      const state = prev;
+      state.notes_count = state.notes_count + 1;
+      state.notes = [...state.notes, newNote];
+      return state;
+    });
 
     router.push(newPath);
   };
@@ -69,23 +106,48 @@ export function ExplorePage() {
   return (
     <Main>
       <ZStack flex={1}>
-        <YStack fullscreen>
+        <YStack fullscreen paddingBottom="$10">
           <StatusBar />
           <ScrollView
-            // horizontal
-            // showsHorizontalScrollIndicator={false}
             px={40}
             contentContainerStyle={{ gap: 14, paddingTop: 14 }}
           >
-            {[...filtered].map(([path, note]) => (
-              <Section onPress={() => router.push(pathname + path)} key={path}>
-                {path.endsWith(".txt") ? (
-                  <NotePreview note={note} />
+            {groupedMap["FOLDER"] &&
+              groupedMap["FOLDER"].map((file) => (
+                <Section
+                  onPress={() => router.push(pathname + file.key)}
+                  key={file.key}
+                >
+                  <FolderPreview path={file.key} note={file} />
+                </Section>
+              ))}
+            {groupedMap["NOTE"] &&
+              [
+                "Today",
+                "Tomorrow",
+                "This Week",
+                "Next Week",
+                "This Month",
+                "Next Month",
+                "None",
+              ].map((value) =>
+                groupedByDeadline[value] ? (
+                  groupedByDeadline[value].map((file) => (
+                    <Section
+                      onPress={() => router.push(pathname + file.key)}
+                      key={file.key}
+                    >
+                      <NotePreview
+                        path={file.key}
+                        note={file}
+                        deadline={file.deadline}
+                      />
+                    </Section>
+                  ))
                 ) : (
-                  <FolderPreview note={note} />
-                )}
-              </Section>
-            ))}
+                  <React.Fragment key={value}></React.Fragment>
+                )
+              )}
           </ScrollView>
         </YStack>
         <YStack fullscreen justifyContent="flex-end" alignItems="flex-end">
