@@ -2,24 +2,15 @@ import { ListPlus } from "@tamagui/lucide-icons";
 import { useAppContext } from "app/AppContext";
 import { Note } from "data/Note";
 import { Tag } from "data/Tag";
-import { usePathname } from "expo-router";
 import { useState } from "react";
-import { Button, Input, SizeTokens, Text, ToggleGroup, XStack } from "tamagui";
+import { Button, Input, ToggleGroup, XStack } from "tamagui";
 import { ButtonText, Title } from "tamagui.config";
 
-export function ModifyTags({
-  setOpen,
-  note,
-}: {
-  setOpen: (value: boolean) => void;
-  note?: Note;
-}) {
-  const pathname = usePathname();
+export function ModifyTags({ setOpen }: { setOpen: (value: boolean) => void }) {
   const { appState, setAppState } = useAppContext();
   const [name, setName] = useState("");
   const [color, setColor] = useState("");
-
-  console.log(appState.tags);
+  const note = appState.modal_state.note as Note;
 
   const createTag = () => {
     if (!name.length) return;
@@ -35,6 +26,29 @@ export function ModifyTags({
 
     setName("");
     setColor("");
+  };
+
+  const toggleNoteTag = (name, tag, toSelect) => {
+    const newNote: Note = {
+      ...note,
+      tag_ids: toSelect
+        ? [...(note?.tag_ids || []), name]
+        : note.tag_ids?.filter((id) => id != name),
+    };
+
+    const newTag: Tag = {
+      ...tag,
+      note_ids: toSelect
+        ? [...tag.note_ids, note.path]
+        : tag.note_ids.filter((id) => id != note.path),
+    };
+
+    setAppState((prev) => ({
+      ...prev,
+      notes: prev.notes.map((n) => (n.path == note.path ? newNote : n)),
+      tags: { ...prev.tags, [name]: newTag },
+      modal_state: { ...prev.modal_state, note: newNote },
+    }));
   };
 
   return (
@@ -59,24 +73,40 @@ export function ModifyTags({
         />
       </XStack>
       <Title>Tags</Title>
-      <ToggleGroup orientation="vertical" type="multiple" size="$0.5" gap="$2">
-        {Object.entries(appState.tags).map(([name, tag]) => (
-          <ToggleGroup.Item
-            key={name}
-            value={name}
-            {...(tag.color && { backgroundColor: tag.color })}
-            borderWidth={0}
-          >
-            <XStack>
-              <Button
+      <ToggleGroup
+        type="multiple"
+        size="$0.5"
+        gap="$2"
+        flexWrap="wrap"
+        //  onValueChange={}
+      >
+        {Object.entries(appState.tags).map(([name, tag]) => {
+          const isSelected = note?.tag_ids?.includes(name);
+
+          return (
+            <ToggleGroup.Item
+              key={name}
+              value={name}
+              padding="$4"
+              //@ts-ignore
+              pressed={isSelected}
+              {...(isSelected &&
+                tag.color && {
+                  borderWidth: 0,
+                  backgroundColor: tag.color,
+                })}
+              onPress={() => toggleNoteTag(name, tag, !isSelected)}
+            >
+              <XStack>
+                {/* <Section
                 borderRadius="$8"
                 {...(tag.color && { backgroundColor: tag.color })}
-              >
+              > */}
                 <ButtonText>{name}</ButtonText>
-              </Button>
-            </XStack>
-          </ToggleGroup.Item>
-        ))}
+              </XStack>
+            </ToggleGroup.Item>
+          );
+        })}
       </ToggleGroup>
     </>
   );
