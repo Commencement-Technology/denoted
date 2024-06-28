@@ -25,7 +25,7 @@ export function NoteHeader() {
 
   const updateNote = (newNote) => {
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.notes = state.notes.map((n) => (n.path == pathname ? newNote : n));
       return state;
     });
@@ -56,10 +56,10 @@ export function NoteHeader() {
 
   const openTagsModal = () => {
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.modal_state.open = true;
       state.modal_state.note = note;
-      state.modal_state.type = "TAGS";
+      state.modal_state.type = "EDIT_TAGS";
       return state;
     });
   };

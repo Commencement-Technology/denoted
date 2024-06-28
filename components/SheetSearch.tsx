@@ -7,7 +7,7 @@ export function SheetSearch() {
 
   const searchQuery = (text) => {
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.modal_state.query = text;
       return state;
     });
@@ -15,7 +15,7 @@ export function SheetSearch() {
 
   const toggleQueryTag = (name, tag, toSelect) => {
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.modal_state.query_tags = toSelect
         ? [...(state.modal_state.query_tags || []), name]
         : state.modal_state.query_tags?.filter((id) => id != name);

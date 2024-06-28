@@ -12,7 +12,7 @@ export const SheetModal = () => {
 
   const setOpen = (value: boolean) => {
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.modal_state.open = value;
       return state;
     });

@@ -20,7 +20,7 @@ export function SheetEditTags() {
     };
 
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.tags = { ...state.tags, [name]: newTag };
       return state;
     });
@@ -44,7 +44,7 @@ export function SheetEditTags() {
     };
 
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.notes = state.notes.map((n) => (n.path == note.path ? newNote : n));
       state.tags[name] = newTag;
       state.modal_state.note = newNote;

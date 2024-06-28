@@ -18,7 +18,7 @@ export function SheetCreateFolder() {
     };
 
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.notes = [...state.notes, newNote];
       state.modal_state.open = false;
       return state;

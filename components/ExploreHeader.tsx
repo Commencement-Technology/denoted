@@ -8,17 +8,17 @@ export function ExploreHeader() {
 
   const openFolderModal = () => {
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.modal_state.open = true;
       state.modal_state.note = undefined;
-      state.modal_state.type = "EDIT";
+      state.modal_state.type = "CREATE_FOLDER";
       return state;
     });
   };
 
   const openSearchModal = () => {
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.modal_state.open = true;
       state.modal_state.note = undefined;
       state.modal_state.type = "SEARCH";

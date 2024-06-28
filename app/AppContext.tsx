@@ -20,7 +20,12 @@ export type stateType = {
 const defaultState: stateType = {
   notes: [],
   notes_count: 0,
-  tags: {},
+  tags: {
+    Personal: { note_ids: [] },
+    Work: { note_ids: [] },
+    Urgent: { note_ids: [] },
+    Important: { note_ids: [] },
+  },
   modal_state: {
     open: false,
   },

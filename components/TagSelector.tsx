@@ -10,7 +10,7 @@ export function TagSelector({ comparable, onPress }) {
       <H2>Tags</H2>
       <ToggleGroup type="multiple" size="$0.5" gap="$2" flexWrap="wrap">
         {Object.entries(appState.tags).map(([name, tag]) => {
-          const isSelected = comparable.includes(name);
+          const isSelected = comparable?.includes(name);
 
           return (
             <ToggleGroup.Item

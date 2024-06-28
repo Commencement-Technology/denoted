@@ -94,7 +94,7 @@ export function ExplorePage() {
     };
 
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.notes_count = state.notes_count + 1;
       state.notes = [...state.notes, newNote];
       return state;

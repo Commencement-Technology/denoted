@@ -21,7 +21,7 @@ export function NotePage() {
     };
 
     setAppState((prev) => {
-      const state = prev;
+      const state = { ...prev };
       state.notes = state.notes.map((n) => (n.path == pathname ? newNote : n));
       return state;
     });
